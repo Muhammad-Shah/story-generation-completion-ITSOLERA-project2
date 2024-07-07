@@ -8,19 +8,22 @@ dotenv_path = '.env'
 load_dotenv(dotenv_path)
 GROQ_API = os.getenv('GROQ_API')
 
-llm = ChatGroq(temperature=0.9,
-                model_name="Llama3-70b-8192",
-                api_key=GROQ_API,
-                max_tokens=1000,
-                model_kwargs={
-                    "top_p": 1,
-                    "frequency_penalty": 0.5,
-                    "presence_penalty": 0.9
-                }
-                )
 
 
-def generate(topic, length, genre, paragraphs=3):
+def llm(temperature):
+    return ChatGroq(temperature=temperature,
+                    model_name="Llama3-70b-8192",
+                    api_key=GROQ_API,
+                    max_tokens=1000,
+                    model_kwargs={
+                        "top_p": 1,
+                        "frequency_penalty": 0.5,
+                        "presence_penalty": 0.9
+                    }
+                    )
+
+
+def generate(topic, length, genre, temperature=0.7, paragraphs=3):
     generation_system_message_content = """
     You are a creative and imaginative assistant specialized in generating stories. 
     When given a prompt, you will generate an engaging and coherent story based on the specified genre and length.
@@ -37,11 +40,11 @@ def generate(topic, length, genre, paragraphs=3):
         HumanMessage(content=human_message_content),
     ])
 
-    response = completion(llm=llm, prompt=prompt_template, topic=topic, length=length, genre=genre, paragraphs=3)
+    response = completion(prompt=prompt_template, topic=topic, length=length, genre=genre, paragraphs=3)
     return response
 
 
-def complete(partial_story, length, genre, paragraphs=3):
+def complete(partial_story, length, genre,  temperature=0.7, paragraphs=3):
     completion_system_message_content = """
     You are a creative and imaginative assistant specialized in completing stories. 
     When given a partial story, you will complete it in the same style and tone, ensuring the story flows naturally.
@@ -66,10 +69,11 @@ def complete(partial_story, length, genre, paragraphs=3):
     # 
     # print(formatted_prompt)
 
-    response = completion(llm=llm, prompt=prompt_template, topic=partial_story, length=length, genre=genre, paragraphs=3)
+    response = completion(prompt=prompt_template, topic=partial_story, length=length, temperature=temperature, genre=genre, paragraphs=3)
     return response
 
-def completion(llm, prompt, topic, length, genre, paragraphs=3):
+def completion(prompt, topic, length, genre, temperature=0.7, paragraphs=3):
+    llm = llm(temperature)
     llm_chain = prompt | llm
     response = llm_chain.invoke({"topic:": topic, "length:": length, "genre:": genre, "paragraphs:": paragraphs}).content
     return response
