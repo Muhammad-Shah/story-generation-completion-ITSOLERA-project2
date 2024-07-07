@@ -1,16 +1,5 @@
 import streamlit as st
-
-# Dummy functions for illustration
-
-
-def generate_story(prompt, length, genre):
-    # Replace with actual story generation logic
-    return f"{prompt} ... (generated {genre} story of {length} words)"
-
-
-def complete_story(partial_story, length, genre):
-    # Replace with actual story completion logic
-    return f"{partial_story} ... (completed {genre} story of {length} words)"
+from generation import generate, complete
 
 
 # Streamlit UI
@@ -22,7 +11,7 @@ task = st.sidebar.selectbox(
 
 if task == "Generate a New Story":
     st.header("Enter your story prompt:")
-    prompt = st.text_area("Prompt", "Once upon a time")
+    prompt = st.text_input("", placeholder="Dog and Cat")
 
     st.sidebar.header("Generation Options")
     length = st.sidebar.slider("Select story length (words)", 100, 1000, 300)
@@ -31,7 +20,7 @@ if task == "Generate a New Story":
 
     if st.button("Generate Story"):
         if prompt.strip():
-            story = generate_story(prompt, length, genre)
+            story = generate(prompt, length, genre)
             st.subheader("Generated Story:")
             st.write(story)
         else:
@@ -49,7 +38,7 @@ elif task == "Complete a Story":
 
     if st.button("Complete Story"):
         if partial_story.strip():
-            completed_story = complete_story(partial_story, length, genre)
+            completed_story = complete(partial_story, length, genre)
             st.subheader("Completed Story:")
             st.write(completed_story)
         else:
