@@ -11,16 +11,28 @@ task = st.sidebar.selectbox(
 
 if task == "Generate a New Story":
     st.header("Enter your story prompt:")
-    prompt = st.text_input("", placeholder="Dog and Cat")
+    prompt = st.text_input(
+        "Sory Title", placeholder="Dog and Cat", label_visibility='hidden')
 
     st.sidebar.header("Generation Options")
-    length = st.sidebar.slider("Select story length (words)", 100, 1000, 300)
+
+    # Creating the slider
+    creative = st.sidebar.slider(
+        label="Realistic Creative", min_value=0.0, max_value=1.0, value=0.7,)
+    length = st.sidebar.selectbox(
+        "Select length", ["Small", "Medium", "Large"])
+    if length == "Small":
+        length = 100
+    elif length == "Medium":
+        length = 300
+    else:
+        length = 500
     genre = st.sidebar.selectbox(
         "Select genre", ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Horror"])
 
     if st.button("Generate Story"):
         if prompt.strip():
-            story = generate(prompt, length, genre)
+            story = generate(prompt, length, genre, )
             st.subheader("Generated Story:")
             st.write(story)
         else:
@@ -28,7 +40,8 @@ if task == "Generate a New Story":
 
 elif task == "Complete a Story":
     st.header("Enter your partial story:")
-    partial_story = st.text_area("Partial Story", "The adventure began when")
+    partial_story = st.text_area(
+        "Partial Story", placeholder="The adventure began when", label_visibility='hidden')
 
     st.sidebar.header("Completion Options")
     length = st.sidebar.slider(
