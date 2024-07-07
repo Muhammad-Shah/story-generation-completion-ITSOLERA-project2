@@ -9,8 +9,7 @@ load_dotenv(dotenv_path)
 GROQ_API = os.getenv('GROQ_API')
 
 
-
-def llm(temperature):
+def chat_model(temperature):
     return ChatGroq(temperature=temperature,
                     model_name="Llama3-70b-8192",
                     api_key=GROQ_API,
@@ -18,7 +17,7 @@ def llm(temperature):
                     model_kwargs={
                         "top_p": 1,
                         "frequency_penalty": 0.5,
-                        "presence_penalty": 0.9
+                        "presence_penalty": 0.5
                     }
                     )
 
@@ -48,13 +47,18 @@ def generate(topic, length, temperature, genre=None, narrative_perspective=None,
     if setting_description:
         human_message_content += f"\nThe setting of the story should be described as: {setting_description}."
 
+    human_message_content += "\n **Response Guidelines**: Don't write additional text before after the completion. We already know that you have written story. Only focus on story."
+
+    # Construct the prompt
     prompt_template = ChatPromptTemplate.from_messages([
         SystemMessage(content=generation_system_message_content),
         HumanMessage(content=human_message_content),
     ])
 
-    response = completion(prompt=prompt_template, topic=topic, length=length, temperature=0.7, genre=None, narrative_perspective=None, character_name=None, character_description=None, setting_description=None)
+    response = completion(prompt=prompt_template, topic=topic, length=length, temperature=0.7, genre=None,
+                          narrative_perspective=None, character_name=None, character_description=None, setting_description=None)
     return response
+
 
 def complete(partial_story, length, temperature, genre=None, narrative_perspective=None, character_name=None, character_description=None, setting_description=None):
     completion_system_message_content = """
@@ -90,14 +94,16 @@ def complete(partial_story, length, temperature, genre=None, narrative_perspecti
     #     length=length,
     #     genre=genre,
     #     paragraphs=paragraphs
-    # 
+    #
     # print(formatted_prompt)
 
-    response = completion(prompt=prompt_template, topic=partial_story, length=length, temperature=0.7, genre=None, narrative_perspective=None, character_name=None, character_description=None, setting_description=None)
+    response = completion(prompt=prompt_template, topic=partial_story, length=length, temperature=0.7, genre=None,
+                          narrative_perspective=None, character_name=None, character_description=None, setting_description=None)
     return response
 
+
 def completion(prompt, topic, length, temperature=0.7, genre=None, narrative_perspective=None, character_name=None, character_description=None, setting_description=None):
-    llm = llm(temperature)
+    llm = chat_model(temperature)
     llm_chain = prompt | llm
 
     # Construct the parameters dictionary
@@ -113,6 +119,6 @@ def completion(prompt, topic, length, temperature=0.7, genre=None, narrative_per
 
     # Remove None values from parameters
     parameters = {k: v for k, v in parameters.items() if v is not None}
-
+    print(parameters)
     response = llm_chain.invoke(parameters).content
     return response
