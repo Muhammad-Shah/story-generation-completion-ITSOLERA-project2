@@ -27,8 +27,6 @@ if task == "Generate a New Story":
         length = 300
     else:
         length = 500
-    genre = st.sidebar.selectbox(
-        "Select genre", ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Horror"])
 
     # Optional parameters (initially None)
     genre = None
@@ -43,13 +41,17 @@ if task == "Generate a New Story":
             "Select genre", ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Horror"])
         narrative_perspective = st.sidebar.selectbox(
             "Narrative perspective", ["First-person", "Third-person", "Epistolary", "Omniscient", "Interactive", "Camera Eye", "Observer", "Stream of Consciousness", "Multiple Perspectives"])
-        character_name = st.sidebar.text_input("Character Name", placeholder='Ex: Jane Doe')
-        character_description = st.sidebar.text_area("Character Description", placeholder='Ex: Jane Doe is is a timid 30-year-old librarian who has lizard as a pet.')
-        setting_description = st.sidebar.text_area("Setting Description", placeholder='Ex: An old small library with many windows.')
+        character_name = st.sidebar.text_input(
+            "Character Name", placeholder='Ex: Jane Doe')
+        character_description = st.sidebar.text_area(
+            "Character Description", placeholder='Ex: Jane Doe is is a timid 30-year-old librarian who has lizard as a pet.')
+        setting_description = st.sidebar.text_area(
+            "Setting Description", placeholder='Ex: An old small library with many windows.')
 
     if st.button("Generate Story"):
         if prompt.strip():
-            story = generate(topic, length, temperature, genre, narrative_perspective, character_name, character_description, setting_description)
+            story = generate(topic, length, temperature, genre, narrative_perspective,
+                             character_name, character_description, setting_description)
             st.subheader("Generated Story:")
             st.write(story)
         else:
@@ -72,12 +74,31 @@ elif task == "Complete a Story":
         length = 300
     else:
         length = 500
-    genre = st.sidebar.selectbox(
-        "Select genre", ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Horror"])
+
+    # Optional parameters (initially None)
+    genre = None
+    narrative_perspective = None
+    character_name = None
+    character_description = None
+    setting_description = None
+
+    # Check if optional parameters are given
+    if st.sidebar.checkbox("Additional Options"):
+        genre = st.sidebar.selectbox(
+            "Select genre", ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Horror"])
+        narrative_perspective = st.sidebar.selectbox(
+            "Narrative perspective", ["First-person", "Third-person", "Epistolary", "Omniscient", "Interactive", "Camera Eye", "Observer", "Stream of Consciousness", "Multiple Perspectives"])
+        character_name = st.sidebar.text_input(
+            "Character Name", placeholder='Ex: Jane Doe')
+        character_description = st.sidebar.text_area(
+            "Character Description", placeholder='Ex: Jane Doe is is a timid 30-year-old librarian who has lizard as a pet.')
+        setting_description = st.sidebar.text_area(
+            "Setting Description", placeholder='Ex: An old small library with many windows.')
 
     if st.button("Complete Story"):
         if partial_story.strip():
-            completed_story = generate(partial_story, length, temperature, genre, narrative_perspective, character_name, character_description, setting_description)
+            completed_story = generate(partial_story, length, temperature, genre,
+                                       narrative_perspective, character_name, character_description, setting_description)
             st.subheader("Completed Story:")
             st.write(completed_story)
         else:
