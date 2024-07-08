@@ -18,7 +18,7 @@ if task == "Generate a New Story":
 
     # Creating the slider
     temperature = st.sidebar.slider(
-        label="Realistic Creative", min_value=0.0, max_value=1.0, value=0.7)
+        label="Realistic Creative", min_value=0.0, max_value=1.0, value=0.5)
     length = st.sidebar.selectbox(
         "Select length", ["Small", "Medium", "Large"])
     if length == "Small":
@@ -50,7 +50,7 @@ if task == "Generate a New Story":
 
     if st.button("Generate Story"):
         if prompt.strip():
-            story = generate(topic, length, temperature, genre, narrative_perspective,
+            story = generate(prompt, length, temperature, genre, narrative_perspective,
                              character_name, character_description, setting_description)
             st.subheader("Generated Story:")
             st.write(story)
