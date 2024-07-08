@@ -8,7 +8,6 @@ dotenv_path = '.env'
 load_dotenv(dotenv_path)
 GROQ_API = os.getenv('GROQ_API')
 
-
 def chat_model(temperature):
     return ChatGroq(temperature=temperature,
                     model_name="Llama3-70b-8192",
